@@ -1,0 +1,30 @@
+### Governing electronic signatures
+http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0600-0699/0668/0668.html
+TITLE XXXIX
+COMMERCIAL RELATIONS
+CHAPTER 668
+ELECTRONIC COMMERCE
+PART I
+ELECTRONIC SIGNATURES
+668.004 Force and effect of electronic signature.—Unless otherwise provided by law, an electronic signature may be used to sign a writing and shall have the same force and effect as a written signature.
+
+PART II
+UNIFORM ELECTRONIC
+TRANSACTION ACT
+668.50 Uniform Electronic Transaction Act.
+(12) RETENTION OF ELECTRONIC RECORDS; ORIGINALS.—
+(a) If a law requires that a record be retained, the requirement is satisfied by retaining an electronic record of the information in the record which:
+1. Accurately reflects the information set forth in the record after the record was first generated in final form as an electronic record or otherwise.
+2. Remains accessible for later reference.
+(d) If a provision of law requires a record to be presented or retained in its original form, or provides consequences if the record is not presented or retained in its original form, that law is satisfied by an electronic record retained in accordance with paragraph (a).
+
+
+### Governing the forms themselves
+The requirement for original signatures are specified by 
+1S-2.0091 Constitutional Amendment Initiative Petition; Submission Deadline; Signature Verification.
+(2).(b) The Supervisor shall not verify as valid a signature on an initiative petition form unless all of the following information is contained on the petition form:
+1. The voter’s name,
+2. The voter’s address (including city and county),
+3. The voter’s date of birth or voter registration number,
+4. The voter’s original signature, and
+5. The date the voter signed the petition, as recorded by the voter.
