@@ -16,4 +16,6 @@
 * Setup basic plumbing by modifying the voteinit\WEB-INF\web.xml
 
 ### Current status
-* Making a simple example to write a pdf dynamically that can be downloaded immediately
+* Got a simple example of writing a pdf dynamically from the webserver working
+* Need to improve workflow to touch the web.xml to trigger a reload, compile the java and copy over the class file and resources (or find the Correct Way without brutal overhead)
+* Need to make some more substantial architecture decisions
