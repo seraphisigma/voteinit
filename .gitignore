@@ -1,3 +1,5 @@
+#eclipse files
+.metadata*
 
 #libre office temp files
 .~*
