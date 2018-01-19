@@ -16,6 +16,13 @@
 * Setup basic plumbing by modifying the voteinit\WEB-INF\web.xml
 
 ### Current status
-* Got a simple example of writing a pdf dynamically from the webserver working
-* Need to improve workflow to touch the web.xml to trigger a reload, compile the java and copy over the class file and resources (or find the Correct Way without brutal overhead)
-* Need to make some more substantial architecture decisions
+* Focusing on simplest, least likely to scale, terrible but complete workflow in order to have one completed petition go through the system
+* Using ant to build a war file, need to setup deploy
+** Local manager isn't working so make a localdeploy and do a an ant copy section
+** Tracking down the minimal set of files to get things to work
+*** Currently copied over index.html, servlets/index.html
+
+### Developer Setup
+* Env vars used include: JAVA_HOME set to the sdk directory, 
+
+

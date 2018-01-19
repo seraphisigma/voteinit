@@ -1,5 +1,9 @@
+# build byproducts
+build/**
+
 #eclipse files
 .metadata*
 
 #libre office temp files
 .~*
+

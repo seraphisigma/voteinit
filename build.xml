@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="voteinit" default="war" basedir=".">
+	<property file="build.properties" />
+	
+	<property name="war-file-name" value="${project-name}.war" />
+	<property name="source-directory" value="src" />
+	<property name="build-directory" value="build" />
+	<property name="classes-directory" value="${build-directory}/bin" />
+	<property name="web-directory" value="web" />
+	<property name="web-xml-file" value="web/WEB-INF/web.xml" />
+	<tstamp prefix="build-info">
+		<format property="current-date" pattern="d-MMMM-yyyy" locale="en" />
+		<format property="current-time" pattern="hh:mm:ss a z" locale="en" />
+		<format property="year-month-day" pattern="yyyy-MM-dd" locale="en" />
+	</tstamp>
+
+	<property name="ftp-remotedir" value="uploaded-wars/${project-name}/${build-info.year-month-day}" />
+
+	<path id="importedclassespath">
+	  <fileset dir="${webjars}">
+		<include name="*.jar"/>
+	  </fileset>
+	  
+	  <fileset dir="${itextpdfjars}">
+	    <include name="*.jar"/>
+	  </fileset>
+
+	  <!--	  
+	  <fileset dir="${web.dir}/WEB-INF/lib">
+		<include name="*.jar"/>
+	  </fileset>
+
+	  <fileset dir="${appserver.lib}">
+		<include name="servlet*.jar"/>
+	  </fileset>
+
+	  <pathelement path="${build.dir}"/>
+	  -->
+	</path>
+
+	<!--
+	<taskdef name="start" classname="org.apache.catalina.ant.StartTask" />
+	<taskdef name="stop" classname="org.apache.catalina.ant.StopTask" />
+	<taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask" />
+	<taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask" />
+	-->
+	
+	
+    <target name="clean">
+        <delete dir="${build-directory}"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${classes-directory}"/>
+        <javac srcdir="${source-directory}" destdir="${classes-directory}" classpathref="importedclassespath"/>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="${build-directory}/jar"/>
+        <jar destfile="${build-directory}/jar/${project-name}.jar" basedir="${classes-directory}">
+            <manifest>
+                <attribute name="Main-Class" value="iTextTest"/>
+            </manifest>
+        </jar>
+    </target>
+
+	<target name="stop" description="stop application in tomcat">
+		<stop url="${tomcat-manager-url}" username="${tomcat-manager-username}"
+			password="${tomcat-manager-password}" path="/${project-name}" />
+	</target>
+
+	<target name="start" description="start application in tomcat">
+		<start url="${tomcat-manager-url}" username="${tomcat-manager-username}"
+			password="${tomcat-manager-password}" path="/${project-name}" />
+	</target>
+	
+	<target name="undeploy" description="undeploy from tomcat">
+		<undeploy 
+			failonerror="no"
+			url="${tomcat-manager-url}"
+			username="${tomcat-manager-username}"
+			password="${tomcat-manager-password}"
+			path="/${project-name}"
+		/>
+	</target>
+	
+	<target name="deploy" description="deploy to tomcat">
+		<echo>deploying from client</echo>
+		<deploy 
+			url="${tomcat-manager-url}"
+			username="${tomcat-manager-username}"
+			password="${tomcat-manager-password}"
+			path="/${project-name}"
+			war="file:${local-path}/${build-directory}/${war-file-name}"
+		/>
+	</target>
+	
+	<target name="war" depends="jar">
+		<mkdir dir="${build-directory}" />
+		<delete file="${build-directory}/${war-file-name}" />
+		<war warfile="${build-directory}/${war-file-name}" webxml="${web-xml-file}">
+			<classes dir="${classes-directory}" />
+			<fileset dir="${web-directory}">
+				<!-- don't double include with webxml attribute already above -->
+				<exclude name="WEB-INF/web.xml" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${builder}" />
+				<attribute name="Built-On" value="${build-info.current-date}" />
+				<attribute name="Built-At" value="${build-info.current-time}" />
+			</manifest>
+		</war>
+	</target>
+
+	<target name="build-and-deploy" depends="war,undeploy,deploy" />
+	
+</project>

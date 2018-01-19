@@ -39,11 +39,11 @@ public class iTextTest extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-	public static final String SRC = "webapps/voteinit/resources/pdfs/hello.pdf";
-    public static final String DEST = "webapps/voteinit/results/stamper/hello_with_image_id.pdf";
+	public static final String SRC = "webapps/voteinit/resources/pdfs/florida.voting.amend.pdf";
+    public static final String DEST = "voteinitresults/hello_with_image_id.pdf";
 	public static final String WEB_DEST = "../../results/stamper/hello_with_image_id.pdf";
 	
-    public static final String IMG = "webapps/voteinit/resources/images/bruno.jpg";
+    public static final String IMG = "webapps/voteinit/resources/images/logo.jpg";
 
     @Override
     public void doGet(HttpServletRequest request,
@@ -59,21 +59,16 @@ public class iTextTest extends HttpServlet {
         out.println("<!DOCTYPE html><html>");
         out.println("<head>");
         out.println("<meta charset=\"UTF-8\" />");
-        String title =  "Hello incompetent human!";
+        String title =  "Hello socially conscious voter!";
         out.println("<title>" + title + "</title>");
         out.println("</head>");
         out.println("<body bgcolor=\"white\">");
 
 
-        out.println("<a href=\"../helloworld.html\">");
-        out.println("<img src=\"../images/code.gif\" height=24 " +
-                    "width=24 align=right border=0 alt=\"view code\"></a>");
-        out.println("<a href=\"../index.html\">");
-        out.println("<img src=\"../images/return.gif\" height=24 " +
-                    "width=24 align=right border=0 alt=\"return\"></a>");
         out.println("<h1>" + title + "</h1>");
-		out.println("<h3>Bundle gave:" + rb.getString("helloworld.title") + "</h3>");
+		out.println("<h3>Bundle gave:" + rb.getString("voteinit.title") + "</h3>");
 
+		out.println("<h2>Build pipeline working</h2>");
 		
 		File file = new File(DEST);
         file.getParentFile().mkdirs();
