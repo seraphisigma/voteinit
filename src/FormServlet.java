@@ -18,6 +18,7 @@ import com.itextpdf.text.pdf.PdfIndirectObject;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.text.pdf.codec.Base64;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,6 +40,7 @@ public class FormServlet extends HttpServlet {
 		String voterReg;
 		String dateOfBirth;
 		String signatureDate;
+		String sigBase64;
 	};
 	
 	public FormData getValidFormData(
@@ -56,8 +58,9 @@ public class FormServlet extends HttpServlet {
 		data.voterReg = request.getParameter("voterReg");
 		data.dateOfBirth = request.getParameter("dateOfBirth");
 		data.signatureDate = request.getParameter("signatureDate");
+		data.sigBase64 = request.getParameter("signature");
 
-		if(data.name == null || data.address == null || data.city == null || data.zip == null || data.county == null || data.voterReg == null || data.dateOfBirth == null || data.signatureDate == null) {
+		if(data.name == null || data.address == null || data.city == null || data.zip == null || data.county == null || data.voterReg == null || data.dateOfBirth == null || data.signatureDate == null || data.sigBase64 == null) {
 			String report = String.format(
 				"name:%s address:%s city:%s zip:%s county:%s change:%d voterReg:%s dateOfBirth:%s signatureDate:%s",
 				data.name, data.address, data.city, data.zip, data.county, data.voterReg, data.dateOfBirth, data.signatureDate);
@@ -114,12 +117,6 @@ public class FormServlet extends HttpServlet {
 			) throws IOException, DocumentException {
         PdfReader reader = new PdfReader(srcFile);
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(destFile));
-        Image image = Image.getInstance(IMG_TEST);
-        PdfImage stream = new PdfImage(image, "", null);
-        stream.put(new PdfName("ITXT_SpecialId"),
-			new PdfName("VoterInformationAndSignature"));
-        PdfIndirectObject ref = stamper.getWriter().addToBody(stream);
-        image.setDirectReference(ref.getIndirectReference());
         PdfContentByte over = stamper.getOverContent(1);
 
 		BaseFont bf = BaseFont.createFont(
@@ -168,12 +165,25 @@ public class FormServlet extends HttpServlet {
 			personData.dateOfBirth, 404, 566, 0);
 		over.showTextAligned(PdfContentByte.ALIGN_LEFT, 
 			personData.signatureDate, 40, 168, 0);
-		over.showTextAligned(PdfContentByte.ALIGN_LEFT, 
-			"Signature", 222, 168, 0);
+		//over.showTextAligned(PdfContentByte.ALIGN_LEFT, 
+		//	"Signature", 222, 168, 0);
 		over.endText();
 		
-		image.setAbsolutePosition(36, 400);
-		//over.addImage(image);
+		// should be formatted like 
+		// data:image/png;base64,iVBORw0KGgoAAAAN...
+		// so get rid of the header
+		String justData = personData.sigBase64.split(",")[1]; 
+		byte [] imageData = Base64.decode(justData);
+		Image image = Image.getInstance(imageData);
+		//Image image = Image.getInstance(IMG_TEST);
+		
+        PdfImage stream = new PdfImage(image, "", null);
+        stream.put(new PdfName("ITXT_SpecialId"),
+			new PdfName("SignatureStream"));
+        PdfIndirectObject ref = stamper.getWriter().addToBody(stream);
+        image.setDirectReference(ref.getIndirectReference());
+		image.setAbsolutePosition(222, 168);
+		over.addImage(image);
 		
         stamper.close();
         reader.close();

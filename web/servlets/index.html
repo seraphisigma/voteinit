@@ -2,10 +2,21 @@
 <head>
    <meta charset="UTF-8" />
    <title>voteinit</title>
+   <style>
+    .doc {
+        width: 604px;
+        margin: 0 auto;
+    }
+    canvas {
+        display: block;
+        border: 2px solid #888;
+    }
+</style>
 </head>
 <body>
 <h1>voteinit servlet</h1>
 <a href="servlet/FormServlet">Execute</a>
+
 
 <form method="POST" action="servlet/FormServlet">
 Name:<input type="text" name="name" value="The Name" /><br>
@@ -17,9 +28,55 @@ Change Address:<input type="checkbox" name="changeAddress" checked /><br>
 Voter Registration Number:<input type="text" name="voterReg" value="1234567890123" /><br>
 Date of Birth:<input type="date" name="dateOfBirth" value="1950-01-01" /><br>
 Date of Signature:<input type="date" name="signatureDate" value="2017-01-02" /><br>
-<input type="submit" value="sign it" /><br>
+<input type="hidden" name="signature" id="sighidden" value="">
+<canvas width="280" height="30" id="sigcanvas"></canvas>
+<input type="button" onclick="saveSignature();submit();" value="sign it" /><br>
 </form>
 
+<script>
+    var canvas, ctx, bMouseIsDown = false, iLastX, iLastY;
+    function init () {
+        canvas = document.getElementById('sigcanvas');
+        ctx = canvas.getContext('2d');
+        bind();
+        draw();
+    }
+    function bind () {
+        canvas.onmousedown = function(e) {
+            bMouseIsDown = true;
+            iLastX = e.clientX - canvas.offsetLeft + (window.pageXOffset||document.body.scrollLeft||document.documentElement.scrollLeft);
+            iLastY = e.clientY - canvas.offsetTop + (window.pageYOffset||document.body.scrollTop||document.documentElement.scrollTop);
+        }
+        canvas.onmouseup = function() {
+            bMouseIsDown = false;
+            iLastX = -1;
+            iLastY = -1;
+        }
+        canvas.onmousemove = function(e) {
+            if (bMouseIsDown) {
+                var iX = e.clientX - canvas.offsetLeft + (window.pageXOffset||document.body.scrollLeft||document.documentElement.scrollLeft);
+                var iY = e.clientY - canvas.offsetTop + (window.pageYOffset||document.body.scrollTop||document.documentElement.scrollTop);
+                ctx.moveTo(iLastX, iLastY);
+                ctx.lineTo(iX, iY);
+                ctx.stroke();
+                iLastX = iX;
+                iLastY = iY;
+            }
+        };
+    }
+    function draw () {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, 280, 30);
+    }
+    
+    function saveSignature() {
+        signaturedata = canvas.toDataURL('image/png');
+        document.getElementById('sighidden').value = signaturedata;
+        // console.log("Preparing to send:" + signaturedata);
+    }
+    
+    onload = init;
+</script>
 
 </body>
 </html>
