@@ -111,13 +111,13 @@
 	
     <!-- Define servlets that are included in the example application -->
     <servlet>
-        <servlet-name>iTextTest</servlet-name>
-        <servlet-class>iTextTest</servlet-class>
+        <servlet-name>FormServlet</servlet-name>
+        <servlet-class>FormServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>iTextTest</servlet-name>
-        <url-pattern>/servlets/servlet/iTextTest</url-pattern>
+        <servlet-name>FormServlet</servlet-name>
+        <url-pattern>/servlets/servlet/FormServlet</url-pattern>
     </servlet-mapping>
 
    <security-constraint>

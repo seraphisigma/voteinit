@@ -54,15 +54,32 @@
         <mkdir dir="${classes-directory}"/>
         <javac srcdir="${source-directory}" destdir="${classes-directory}" classpathref="importedclassespath"/>
     </target>
-
+	
     <target name="jar" depends="compile">
         <mkdir dir="${build-directory}/jar"/>
         <jar destfile="${build-directory}/jar/${project-name}.jar" basedir="${classes-directory}">
             <manifest>
-                <attribute name="Main-Class" value="iTextTest"/>
+                <attribute name="Main-Class" value="FormServlet"/>
             </manifest>
         </jar>
     </target>
+	
+	<target name="war" depends="jar">
+		<mkdir dir="${build-directory}" />
+		<delete file="${build-directory}/${war-file-name}" />
+		<war warfile="${build-directory}/${war-file-name}" webxml="${web-xml-file}">
+			<classes dir="${classes-directory}" />
+			<fileset dir="${web-directory}">
+				<!-- don't double include with webxml attribute already above -->
+				<exclude name="WEB-INF/web.xml" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${builder}" />
+				<attribute name="Built-On" value="${build-info.current-date}" />
+				<attribute name="Built-At" value="${build-info.current-time}" />
+			</manifest>
+		</war>
+	</target>
 
 	<target name="stop" description="stop application in tomcat">
 		<stop url="${tomcat-manager-url}" username="${tomcat-manager-username}"
@@ -84,7 +101,7 @@
 		/>
 	</target>
 	
-	<target name="deploy" description="deploy to tomcat">
+	<target name="deploy" description="deploy to tomcat" depends="war">
 		<echo>deploying from client</echo>
 		<deploy 
 			url="${tomcat-manager-url}"
@@ -95,23 +112,6 @@
 		/>
 	</target>
 	
-	<target name="war" depends="jar">
-		<mkdir dir="${build-directory}" />
-		<delete file="${build-directory}/${war-file-name}" />
-		<war warfile="${build-directory}/${war-file-name}" webxml="${web-xml-file}">
-			<classes dir="${classes-directory}" />
-			<fileset dir="${web-directory}">
-				<!-- don't double include with webxml attribute already above -->
-				<exclude name="WEB-INF/web.xml" />
-			</fileset>
-			<manifest>
-				<attribute name="Built-By" value="${builder}" />
-				<attribute name="Built-On" value="${build-info.current-date}" />
-				<attribute name="Built-At" value="${build-info.current-time}" />
-			</manifest>
-		</war>
-	</target>
-
 	<target name="build-and-deploy" depends="war,undeploy,deploy" />
 	
 </project>

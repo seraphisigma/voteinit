@@ -17,12 +17,21 @@
 
 ### Current status
 * Focusing on simplest, least likely to scale, terrible but complete workflow in order to have one completed petition go through the system
-* Using ant to build a war file, need to setup deploy
-** Local manager isn't working so make a localdeploy and do a an ant copy section
-** Tracking down the minimal set of files to get things to work
-*** Currently copied over index.html, servlets/index.html
+* Doing basic form submission, using to write fields into pdf
 
-### Developer Setup
+### Developer Setup (win)
 * Env vars used include: JAVA_HOME set to the sdk directory, 
+* ant war
+* net stop tomcat8
+* rm -rf "\Program Files\Apache Software Foundation\Tomcat 8.5\webapps\voteinit"
+* cp build\voteinit.war "\Program Files\Apache Software Foundation\Tomcat 8.5\webapps\"
+* net start tomcat8
 
-
+### Todo notes
+* Align fields to be written
+* Write out form fields to pdf
+* Web signature to
+  * raster collection of points
+  * image
+* Write out image to pdf
+* Refactor naming and cleanup references and shared usage
