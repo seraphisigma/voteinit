@@ -25,69 +25,110 @@ import java.io.IOException;
 public class FormServlet extends HttpServlet {
 
 
-	public static final String SRC = "webapps/voteinit/resources/pdfs/florida.voting.amend.pdf";
-    public static final String DEST = "voteinitresults/hello_with_image_id.pdf";
-	public static final String WEB_DEST = "../../results/stamper/hello_with_image_id.pdf";
+	public static final String SRC_PDF = "webapps/voteinit/resources/pdfs/florida.voting.amend.pdf";
+    public static final String DEST_PDF = "voteinitresults/hello_with_image_id.pdf";	
+    public static final String IMG_TEST = "webapps/voteinit/resources/images/logo.jpg";
 	
-    public static final String IMG = "webapps/voteinit/resources/images/logo.jpg";
+	public class FormData {
+		String name;
+		String address;
+		String city;
+		String zip;
+		String county;
+		boolean changeAddress;
+		String voterReg;
+		String dateOfBirth;
+		String signatureDate;
+	};
 	
-    @Override
-    public void doGet(HttpServletRequest request,
+	public FormData getValidFormData(
+			HttpServletRequest request,
+			PrintWriter out
+			) throws ServletException {
+		FormData data = new FormData();
+					
+		data.name = request.getParameter("name");
+		data.address = request.getParameter("address");
+		data.city = request.getParameter("city");
+		data.zip = request.getParameter("zip");
+		data.county = request.getParameter("county");
+		data.changeAddress = request.getParameter("changeAddress") != null;
+		data.voterReg = request.getParameter("voterReg");
+		data.dateOfBirth = request.getParameter("dateOfBirth");
+		data.signatureDate = request.getParameter("signatureDate");
+
+		if(data.name == null || data.address == null || data.city == null || data.zip == null || data.county == null || data.voterReg == null || data.dateOfBirth == null || data.signatureDate == null) {
+			String report = String.format(
+				"name:%s address:%s city:%s zip:%s county:%s change:%d voterReg:%s dateOfBirth:%s signatureDate:%s",
+				data.name, data.address, data.city, data.zip, data.county, data.voterReg, data.dateOfBirth, data.signatureDate);
+			throw new ServletException("invalid form data:" + report);
+		}
+	
+		return data;
+	}
+	
+	@Override
+	public void doPost(HttpServletRequest request,
                       HttpServletResponse response)
         throws IOException, ServletException
     {
-        ResourceBundle rb =
-            ResourceBundle.getBundle("LocalStrings",request.getLocale());
-        response.setContentType("text/html");
+		response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
-        PrintWriter out = response.getWriter();
-
-        out.println("<!DOCTYPE html><html>");
+        
+		PrintWriter out = response.getWriter();
+		out.println("<!DOCTYPE html><html>");
         out.println("<head>");
-        out.println("<meta charset=\"UTF-8\" />");
-        String title =  "Hello socially conscious voter!";
-        out.println("<title>" + title + "</title>");
-        out.println("</head>");
         out.println("<body bgcolor=\"white\">");
 
-        out.println("<h1>" + title + "</h1>");
-		out.println("<h3>Bundle gave:" + rb.getString("voteinit.title") + "</h3>");
-
-		out.println("<h2>From form  servlet</h2>");
+		out.println("<h2>wow:" + request.getParameter("name") + "!</h2>");
 		
-		File file = new File(DEST);
+		FormData personData;
+		try {
+			personData = getValidFormData(request, out);
+		} catch (ServletException ex) {
+			out.println(
+				"<h2>Exception was: " + ex.getMessage() + "</h2>");
+			throw(ex);
+		}
+
+		out.println("<h2>From POST form servlet</h2>");
+		
+		File file = new File(DEST_PDF);
         file.getParentFile().mkdirs();
 		try {
-			PdfReader reader = new PdfReader(SRC);
+			PdfReader reader = new PdfReader(SRC_PDF);
 			out.println("<h4>about to print fields" + reader.getAcroFields().getFields().entrySet().size());
 			for(Map.Entry<String, AcroFields.Item> entry : reader.getAcroFields().getFields().entrySet()) {
 				out.println("<h4>!! " + entry.getKey() + ", !!! " + entry.getValue());
 			}
 			reader.close();
 			
-			manipulatePdf(SRC, DEST);
+			writeNewForm(SRC_PDF, DEST_PDF, personData);
 		} catch (Exception ex) {
 			out.println("<h4>Exception was: " + ex.getMessage() + "</h4>");
 		}
 
-		out.println("<h2>Made a pdf!</h2>");
-        out.println("<a href=\"" + WEB_DEST + "\">Try it?</a>");
-		
-        out.println("</body>");
+	    out.println("</body>");
         out.println("</html>");
-    }
+	}
 	
-    public void manipulatePdf(String src, String dest) throws IOException, DocumentException {
-        PdfReader reader = new PdfReader(src);
-        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(dest));
-        Image image = Image.getInstance(IMG);
+    public void writeNewForm(
+			String srcFile, 
+			String destFile, 
+			FormData personData
+			) throws IOException, DocumentException {
+        PdfReader reader = new PdfReader(srcFile);
+        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(destFile));
+        Image image = Image.getInstance(IMG_TEST);
         PdfImage stream = new PdfImage(image, "", null);
-        stream.put(new PdfName("ITXT_SpecialId"), new PdfName("123456789"));
+        stream.put(new PdfName("ITXT_SpecialId"),
+			new PdfName("VoterInformationAndSignature"));
         PdfIndirectObject ref = stamper.getWriter().addToBody(stream);
         image.setDirectReference(ref.getIndirectReference());
         PdfContentByte over = stamper.getOverContent(1);
 
-		BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, "Cp1252", false);
+		BaseFont bf = BaseFont.createFont(
+			BaseFont.HELVETICA, "Cp1252", false);
 		
 		boolean drawDebugCoords = false;
 		if(drawDebugCoords) {
@@ -104,34 +145,34 @@ public class FormServlet extends HttpServlet {
 					String text = "" + xPos + "," + yPos;
 					over.showTextAligned(PdfContentByte.ALIGN_LEFT, 
 						text, xPos, yPos, 0 /*rotation*/);
-					//over.showText("here we go wow");
-					// 136, 180 name
-					//over.moveText(136, 180); 
 					over.endText();
 				}
 			}
 		}
 		
+		// Hardcoded numbers correspond to florida voting restoration amendment petition form
 		over.beginText();
 		over.setFontAndSize(bf, 10);
 		over.showTextAligned(PdfContentByte.ALIGN_LEFT, 
-			"Your name", 92, 658, 0);
+			personData.name, 92, 658, 0);
 		over.showTextAligned(PdfContentByte.ALIGN_LEFT, 
-			"Your address", 100, 630, 0);
+			personData.address, 100, 630, 0);
 		over.showTextAligned(PdfContentByte.ALIGN_LEFT, 
-			"City", 66, 608, 0);
+			personData.city, 64, 608, 0);
 		over.showTextAligned(PdfContentByte.ALIGN_LEFT, 
-			"Zip", 266, 608, 0);
+			personData.zip, 266, 608, 0);
 		over.showTextAligned(PdfContentByte.ALIGN_LEFT, 
-			"County", 404, 608, 0);
+			personData.county, 408, 608, 0);
+		if(personData.changeAddress) {
+			over.showTextAligned(PdfContentByte.ALIGN_LEFT, 
+				"X", 44, 586, 0);
+		}
 		over.showTextAligned(PdfContentByte.ALIGN_LEFT, 
-			"X", 44, 586, 0);
+			personData.voterReg, 162, 566, 0);
 		over.showTextAligned(PdfContentByte.ALIGN_LEFT, 
-			"Voter Registration Number", 162, 566, 0);
+			personData.dateOfBirth, 404, 566, 0);
 		over.showTextAligned(PdfContentByte.ALIGN_LEFT, 
-			"Date of Birth", 402, 566, 0);
-		over.showTextAligned(PdfContentByte.ALIGN_LEFT, 
-			"Date of Signature", 40, 168, 0);
+			personData.signatureDate, 40, 168, 0);
 		over.showTextAligned(PdfContentByte.ALIGN_LEFT, 
 			"Signature", 222, 168, 0);
 		over.endText();

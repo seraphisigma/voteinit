@@ -17,7 +17,7 @@
 
 ### Current status
 * Focusing on simplest, least likely to scale, terrible but complete workflow in order to have one completed petition go through the system
-* Doing basic form submission, using to write fields into pdf
+* Get web signature with mobile support
 
 ### Developer Setup (win)
 * Env vars used include: JAVA_HOME set to the sdk directory, 
@@ -28,10 +28,9 @@
 * net start tomcat8
 
 ### Todo notes
-* Align fields to be written
-* Write out form fields to pdf
 * Web signature to
   * raster collection of points
   * image
 * Write out image to pdf
-* Refactor naming and cleanup references and shared usage
+* Clean up and document
+* Validate form input thoroughly
