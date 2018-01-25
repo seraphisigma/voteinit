@@ -95,18 +95,13 @@ public class FormServlet extends HttpServlet {
 		
 		File file = new File(DEST_PDF);
         file.getParentFile().mkdirs();
-		try {
-			PdfReader reader = new PdfReader(SRC_PDF);
-			out.println("<h4>about to print fields" + reader.getAcroFields().getFields().entrySet().size());
-			for(Map.Entry<String, AcroFields.Item> entry : reader.getAcroFields().getFields().entrySet()) {
-				out.println("<h4>!! " + entry.getKey() + ", !!! " + entry.getValue());
-			}
-			reader.close();
-			
+		try {			
 			writeNewForm(SRC_PDF, DEST_PDF, personData);
 		} catch (Exception ex) {
 			out.println("<h4>Exception was: " + ex.getMessage() + "</h4>");
 		}
+		
+		out.println("Signature recorded and petition created successfully!");
 
 	    out.println("</body>");
         out.println("</html>");
