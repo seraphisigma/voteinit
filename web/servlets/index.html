@@ -23,7 +23,11 @@ Date of Signature:<input type="date" name="signatureDate" value="2017-01-02" /><
 <input type="hidden" name="signature" id="sighidden" value="">
 <div id="signature-pad" class="signature-pad">
     <div class="signature-pad--body">
-      <canvas id="sigcanvas" width="280" height="30"></canvas>
+	<canvas id="sigcanvas" width="1200" height="128" style="width:600px;height:64px;"></canvas>
+<!--
+	<canvas id="sigcanvas" width="1200" height="600" style="width:600px;height:300px;"></canvas>
+    <canvas id="sigcanvas" width="600" height="300"></canvas>
+-->
     </div>
     <div class="signature-pad--footer">
       
@@ -54,7 +58,10 @@ var canvas = wrapper.querySelector("canvas");
 var signaturePad = new SignaturePad(canvas, {
   // It's Necessary to use an opaque color when saving image as JPEG;
   // this option can be omitted if only saving as PNG or SVG
-  backgroundColor: 'rgb(255, 255, 255)'
+  backgroundColor: 'rgb(255, 255, 255)',
+  inputRatio: 2.0,
+  minWidth: 1.0,
+  maxWidth: 5.0,
 });
 
 // Adjust canvas coordinate space taking into account pixel ratio,
@@ -89,5 +96,6 @@ clearButton.addEventListener("click", function (event) {
 });
 
 </script>
+
 </body>
 </html>

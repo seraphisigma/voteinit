@@ -25,10 +25,8 @@ import java.io.IOException;
  
 public class FormServlet extends HttpServlet {
 
-
 	public static final String SRC_PDF = "webapps/voteinit/resources/pdfs/florida.voting.amend.pdf";
-    public static final String DEST_PDF = "voteinitresults/hello_with_image_id.pdf";	
-    public static final String IMG_TEST = "webapps/voteinit/resources/images/logo.jpg";
+    public static final String DEST_PDF = "voteinitresults/hello_with_image_id.pdf";
 	
 	public class FormData {
 		String name;
@@ -175,7 +173,7 @@ public class FormServlet extends HttpServlet {
 		String justData = personData.sigBase64.split(",")[1]; 
 		byte [] imageData = Base64.decode(justData);
 		Image image = Image.getInstance(imageData);
-		//Image image = Image.getInstance(IMG_TEST);
+		image.scaleAbsolute(280, 30);
 		
         PdfImage stream = new PdfImage(image, "", null);
         stream.put(new PdfName("ITXT_SpecialId"),

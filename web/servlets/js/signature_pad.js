@@ -133,6 +133,7 @@ function SignaturePad(canvas, options) {
   this.backgroundColor = opts.backgroundColor || 'rgba(0,0,0,0)';
   this.onBegin = opts.onBegin;
   this.onEnd = opts.onEnd;
+  this.inputRatio = opts.inputRatio || 1.0;
 
   this._canvas = canvas;
   this._ctx = canvas.getContext('2d');
@@ -272,9 +273,17 @@ SignaturePad.prototype._strokeBegin = function (event) {
 };
 
 SignaturePad.prototype._strokeUpdate = function (event) {
-  var x = event.clientX;
-  var y = event.clientY;
-
+  // get the event point, translate into local canvas coordinates, 
+  // scale input, then translate back into client canvas coords
+  var rect = this._canvas.getBoundingClientRect();
+  var canvpos = { x: rect.left, y: rect.top };  
+  var localX = event.clientX - canvpos.x;
+  var localY = event.clientY - canvpos.y;
+  localX *= this.inputRatio;
+  localY *= this.inputRatio;
+  var x = localX + canvpos.x;
+  var y = localY + canvpos.y;
+  
   var point = this._createPoint(x, y);
   var lastPointGroup = this._data[this._data.length - 1];
   var lastPoint = lastPointGroup && lastPointGroup[lastPointGroup.length - 1];
