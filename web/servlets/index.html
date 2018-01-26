@@ -2,18 +2,6 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>voteinit</title>
-	<!-- v1 drawing
-	<style>
-    .doc {
-        width: 604px;
-        margin: 0 auto;
-    }
-    canvas {
-        display: block;
-        border: 2px solid #888;
-    }
-	</style>
-	-->
 	<!--<link rel="stylesheet" href="css/signature-pad.css">-->
 
 </head>
@@ -33,9 +21,6 @@ Voter Registration Number:<input type="text" name="voterReg" value="123456789012
 Date of Birth:<input type="date" name="dateOfBirth" value="1950-01-01" /><br>
 Date of Signature:<input type="date" name="signatureDate" value="2017-01-02" /><br>
 <input type="hidden" name="signature" id="sighidden" value="">
-<!-- drawing v1
-<canvas width="280" height="30" id="sigcanvas"></canvas>
--->
 <div id="signature-pad" class="signature-pad">
     <div class="signature-pad--body">
       <canvas id="sigcanvas" width="280" height="30"></canvas>
@@ -43,25 +28,11 @@ Date of Signature:<input type="date" name="signatureDate" value="2017-01-02" /><
     <div class="signature-pad--footer">
       
       <div class="description">
-	  Sign above
-	  <button type="button" class="button clear" data-action="clear">Clear</button>
+		Sign above
+		<button type="button" class="button clear" data-action="clear">
+			Clear
+		</button>
 	  </div>
-		  
-      <!--
-      <div class="signature-pad--actions">
-        <div>
-		  <button type="button" class="button clear" data-action="clear">Clear</button>
-          <button type="button" class="button" data-action="change-color">Change color</button>
-          <button type="button" class="button" data-action="undo">Undo</button>
-        </div>
-        <div>
-          <button type="button" class="button save" data-action="save-png">Save as PNG</button>
-          <button type="button" class="button save" data-action="save-jpg">Save as JPG</button>
-          <button type="button" class="button save" data-action="save-svg">Save as SVG</button>
-		  
-        </div>
-        -->
-      </div>
     </div>
 </div>
 
@@ -113,85 +84,10 @@ function resizeCanvas() {
 //window.onresize = resizeCanvas;
 //resizeCanvas();
 
-function download(dataURL, filename) {
-  var blob = dataURLToBlob(dataURL);
-  var url = window.URL.createObjectURL(blob);
-
-  var a = document.createElement("a");
-  a.style = "display: none";
-  a.href = url;
-  a.download = filename;
-
-  document.body.appendChild(a);
-  a.click();
-
-  window.URL.revokeObjectURL(url);
-}
-
-// One could simply use Canvas#toBlob method instead, but it's just to show
-// that it can be done using result of SignaturePad#toDataURL.
-function dataURLToBlob(dataURL) {
-  // Code taken from https://github.com/ebidel/filer.js
-  var parts = dataURL.split(';base64,');
-  var contentType = parts[0].split(":")[1];
-  var raw = window.atob(parts[1]);
-  var rawLength = raw.length;
-  var uInt8Array = new Uint8Array(rawLength);
-
-  for (var i = 0; i < rawLength; ++i) {
-    uInt8Array[i] = raw.charCodeAt(i);
-  }
-
-  return new Blob([uInt8Array], { type: contentType });
-}
-
 clearButton.addEventListener("click", function (event) {
   signaturePad.clear();
 });
 
-
-
 </script>
-<!-- v1 drawing 
-<script>
-    var canvas, ctx, bMouseIsDown = false, iLastX, iLastY;
-    function init () {
-        canvas = document.getElementById('sigcanvas');
-        ctx = canvas.getContext('2d');
-        bind();
-        draw();
-    }
-    function bind () {
-        canvas.onmousedown = function(e) {
-            bMouseIsDown = true;
-            iLastX = e.clientX - canvas.offsetLeft + (window.pageXOffset||document.body.scrollLeft||document.documentElement.scrollLeft);
-            iLastY = e.clientY - canvas.offsetTop + (window.pageYOffset||document.body.scrollTop||document.documentElement.scrollTop);
-        }
-        canvas.onmouseup = function() {
-            bMouseIsDown = false;
-            iLastX = -1;
-            iLastY = -1;
-        }
-        canvas.onmousemove = function(e) {
-            if (bMouseIsDown) {
-                var iX = e.clientX - canvas.offsetLeft + (window.pageXOffset||document.body.scrollLeft||document.documentElement.scrollLeft);
-                var iY = e.clientY - canvas.offsetTop + (window.pageYOffset||document.body.scrollTop||document.documentElement.scrollTop);
-                ctx.moveTo(iLastX, iLastY);
-                ctx.lineTo(iX, iY);
-                ctx.stroke();
-                iLastX = iX;
-                iLastY = iY;
-            }
-        };
-    }
-    function draw () {
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, 280, 30);
-    }
-    
-    
-    onload = init;
-</script>
--->
 </body>
 </html>
