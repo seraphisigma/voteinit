@@ -1,7 +1,14 @@
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Map;
-import java.util.ResourceBundle;
+//import java.io.IOException;
+//import java.io.PrintWriter;
+//import java.io.File;
+//import java.io.FileOutputStream;
+//import java.io.IOException;
+import java.io.*;
+//import java.util.Map;
+//import java.util.ResourceBundle;
+import java.util.*;
+import java.lang.Math.*;
+
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,14 +26,14 @@ import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.codec.Base64;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
  
 public class FormServlet extends HttpServlet {
 
 	public static final String SRC_PDF = "webapps/voteinit/resources/pdfs/florida.voting.amend.pdf";
-    public static final String DEST_PDF = "voteinitresults/hello_with_image_id.pdf";
+
+    public static final String DEST_DIR = "voteinitresults/";
+	public static final String DEST_PREFIX = "fl.vra18.";
+	public static final String DEST_EXT = ".pdf";
 	
 	public class FormData {
 		String name;
@@ -39,6 +46,20 @@ public class FormServlet extends HttpServlet {
 		String dateOfBirth;
 		String signatureDate;
 		String sigBase64;
+		
+		@Override
+		public int hashCode() {
+			return name.hashCode() 
+				^ city.hashCode()
+				^ zip.hashCode()
+				^ county.hashCode()
+				^ (changeAddress ? 0 : 1)
+				^ voterReg.hashCode()
+				^ dateOfBirth.hashCode()
+				^ signatureDate.hashCode()
+				^ sigBase64.hashCode();
+		}
+		
 	};
 	
 	public FormData getValidFormData(
@@ -68,11 +89,19 @@ public class FormServlet extends HttpServlet {
 		return data;
 	}
 	
+	public String getResultFileName(FormData person) {
+		String result = DEST_DIR + DEST_PREFIX 
+			+ Math.abs(person.hashCode()) + "."
+			+ Math.abs(System.currentTimeMillis())
+			//+ "." + Math.abs((new Long(System.currentTimeMillis())).hashCode())
+			+ DEST_EXT;
+		return result;
+	}
+	
 	@Override
 	public void doPost(HttpServletRequest request,
                       HttpServletResponse response)
-        throws IOException, ServletException
-    {
+        throws IOException, ServletException {
 		response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
         
@@ -94,15 +123,18 @@ public class FormServlet extends HttpServlet {
 
 		out.println("<h2>From POST form servlet</h2>");
 		
-		File file = new File(DEST_PDF);
+		String resultName = getResultFileName(personData);
+		File file = new File(resultName);
         file.getParentFile().mkdirs();
 		try {			
-			writeNewForm(SRC_PDF, DEST_PDF, personData);
+			writeNewForm(SRC_PDF, resultName, personData);
 		} catch (Exception ex) {
 			out.println("<h4>Exception was: " + ex.getMessage() + "</h4>");
 		}
 		
 		out.println("Signature recorded and petition created successfully!");
+		
+		out.println("<h4>Wrote to " + resultName + "</h4>");
 
 	    out.println("</body>");
         out.println("</html>");

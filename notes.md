@@ -17,7 +17,6 @@
 
 ### Current status
 * Focusing on simplest, least likely to scale, terrible but complete workflow in order to have one completed petition go through the system
-* Get web signature with mobile support
 
 ### Developer Setup (win)
 * Env vars used include: JAVA_HOME set to the sdk directory, 
@@ -28,9 +27,7 @@
 * net start tomcat8
 
 ### Todo notes
-* Web signature to
-  * raster collection of points
-  * image
-* Write out image to pdf
+* Reliable Transactional Result storage
+* Create simple ui 
 * Clean up and document
 * Validate form input thoroughly
