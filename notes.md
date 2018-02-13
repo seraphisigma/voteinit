@@ -16,14 +16,20 @@
 * Setup basic plumbing by modifying the voteinit\WEB-INF\web.xml
 
 ### Current status
+* Generated react path needs a voteinit subdir, or that needs to be pulled
 * Focusing on simplest, least likely to scale, terrible but complete workflow in order to have one completed petition go through the system
 
 ### Developer Setup (win)
-* Env vars used include: JAVA_HOME set to the sdk directory, 
+* Env vars used include: JAVA_HOME set to the sdk directory,
+* Starting from project root:
+* cd src\voteinit_client
+* npm run build
+* xcopy /E build\*.* ..\..\web\  
+* cd ..\..
 * ant war
 * net stop tomcat8
 * rm -rf "\Program Files\Apache Software Foundation\Tomcat 8.5\webapps\voteinit"
-* cp build\voteinit.war "\Program Files\Apache Software Foundation\Tomcat 8.5\webapps\"
+* cp build\voteinit.war "\Program Files\Apache Software Foundation\Tomcat 8.5\webapps\voteinit.war"
 * net start tomcat8
 
 ### Todo notes

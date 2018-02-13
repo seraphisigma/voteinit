@@ -1,6 +1,14 @@
 # build byproducts
 build/**
 
+# build products that shouldn't be checked in
+web/index.html
+web/asset-manifest.json
+web/favicon.ico
+web/manifest.json
+web/service-worker.js
+web/static/**
+
 #eclipse files
 .metadata*
 
